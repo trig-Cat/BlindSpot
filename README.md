@@ -1,2 +1,3 @@
 # BlindSpot
-Lidar Doom remake for Juice 2024 by HackClub
+Sensory Deprivation hack and slash for Juice 2025 by HackClub
+
