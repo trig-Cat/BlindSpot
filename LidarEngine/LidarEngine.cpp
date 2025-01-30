@@ -3,15 +3,20 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <glad/glad.h>
 
 LidarEngine::LidarEngine(int numRays) : numRays(numRays), 
-                                       coneHeight(10.0f), 
-                                       burstRadius(20.0f) {
+                                        coneHeight(10.0f),
+                                        burstRadius(20.0f) {
     initializeGL();
     srand(time(nullptr));
+    glGenVertexArrays(1, &vertex_arr_obj);
+    glBindVertexArray(vertex_arr_obj);
 }
 
 LidarEngine::~LidarEngine() {
+    glBindVertexArray(0); // Unbind VAO
+
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
 }

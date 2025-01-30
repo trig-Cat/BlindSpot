@@ -17,6 +17,8 @@ find_package(glad CONFIG REQUIRED)
 find_package(FreeGLUT CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
+target_link_libraries(BlindSpot PRIVATE glad::glad)
+
 target_link_libraries(BlindSpot PRIVATE glm::glm)
 target_link_libraries(BlindSpot PRIVATE $<IF:$<TARGET_EXISTS:FreeGLUT::freeglut>,FreeGLUT::freeglut,FreeGLUT::freeglut_static>)
 
@@ -24,4 +26,3 @@ target_link_libraries(BlindSpot PRIVATE $<IF:$<TARGET_EXISTS:FreeGLUT::freeglut>
 target_link_libraries(BlindSpot PRIVATE fmt::fmt)
 
 target_link_libraries(BlindSpot PRIVATE glfw)
-target_link_libraries(BlindSpot PRIVATE glad)

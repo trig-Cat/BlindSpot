@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <glm/glm.hpp>
+#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 class WorldObject {
@@ -27,6 +28,8 @@ private:
     std::vector<WorldObject> objects;
     std::vector<glm::vec3> hitPoints;
     std::vector<bool> isEnemyHits;
+    GLuint vertex_arr_obj;
+
     
 public:
     LidarEngine(int numRays = 10000);
