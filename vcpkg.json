@@ -1,7 +1,9 @@
 {
   "dependencies": [
     "fmt",
+    "freeglut",
+    "glad",
     "glfw3",
-    "glad"
+    "glm"
   ]
 }

@@ -1,8 +1,8 @@
 #ifndef LIDAR_ENGINE_H
 #define LIDAR_ENGINE_H
 
-#include <OpenGL/OpenGL.h>
-#include <GLUT/GLUT.h>
+
+#include <GL/glut.h>
 #include <vector>
 #include <cmath>
 #include <glm/glm.hpp>
