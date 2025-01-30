@@ -1,9 +1,10 @@
+#include <glad/glad.h>
 #include "LidarEngine.h"
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/vector_query.hpp>
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
-#include <glad/glad.h>
 
 LidarEngine::LidarEngine(int numRays) : numRays(numRays), 
                                         coneHeight(10.0f),
@@ -14,7 +15,6 @@ LidarEngine::LidarEngine(int numRays) : numRays(numRays),
 }
 
 LidarEngine::~LidarEngine() {
-    glBindVertexArray(0); // Unbind VAO
 
     glDeleteVertexArrays(1, &vertex_arr_obj);
     glDeleteBuffers(1, &vbo);
@@ -47,11 +47,11 @@ bool rayAABBIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection,
     glm::vec3 tMin = (boxMin - rayOrigin) * invRay;
     glm::vec3 tMax = (boxMax - rayOrigin) * invRay;
 
-    glm::vec3 t0 = glm::max(tMin, tMax);
-    glm::vec3 t1 = glm::min(tMin, tMax);
+    glm::vec3 t0 = max(tMin, tMax);
+    glm::vec3 t1 = min(tMin, tMax);
 
-    float tClosest = glm::max(glm::max(t0.x, t0.y), glm::max(t0.z, t0.w));
-    float tFarthest = glm::min(glm::min(t1.x, t1.y), glm::min(t1.z, t1.w));
+    float tClosest = glm::max(glm::max(t0.x, t0.y), t0.z);
+    float tFarthest = glm::min(glm::min(t1.x, t1.y), t1.z);
 
     if (tClosest < tFarthest) {
         t = tClosest;
@@ -59,6 +59,8 @@ bool rayAABBIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection,
     }
     return false;
 }
+
+
 void LidarEngine::fireRays(bool burstMode) {
     hitPoints.clear();
     isEnemyHits.clear();

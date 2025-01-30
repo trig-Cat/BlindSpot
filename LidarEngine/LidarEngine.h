@@ -6,7 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <glm/glm.hpp>
-#include <glad/glad.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 class WorldObject {
