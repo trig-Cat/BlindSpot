@@ -29,6 +29,7 @@ private:
     std::vector<glm::vec3> hitPoints;
     std::vector<bool> isEnemyHits;
     GLuint vertex_arr_obj;
+    GLuint vbo;
 
     
 public:

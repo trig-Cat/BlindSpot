@@ -10,22 +10,21 @@ LidarEngine::LidarEngine(int numRays) : numRays(numRays),
                                         burstRadius(20.0f) {
     initializeGL();
     srand(time(nullptr));
-    glGenVertexArrays(1, &vertex_arr_obj);
-    glBindVertexArray(vertex_arr_obj);
+
 }
 
 LidarEngine::~LidarEngine() {
     glBindVertexArray(0); // Unbind VAO
 
-    glDeleteVertexArrays(1, &vao);
+    glDeleteVertexArrays(1, &vertex_arr_obj);
     glDeleteBuffers(1, &vbo);
 }
 
 void LidarEngine::initializeGL() {
-    glGenVertexArrays(1, &vao);
+    glGenVertexArrays(1, &vertex_arr_obj);
     glGenBuffers(1, &vbo);
     
-    glBindVertexArray(vao);
+    glBindVertexArray(vertex_arr_obj);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * 2 * numRays, nullptr, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
@@ -41,7 +40,25 @@ void LidarEngine::addObject(WorldObject obj) {
 void LidarEngine::setCameraPosition(glm::vec3 position) {
     cameraPosition = position;
 }
+bool rayAABBIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection,
+                          glm::vec3 boxMin, glm::vec3 boxMax,
+                          float& t) {
+    glm::vec3 invRay = glm::vec3(1.0f) / rayDirection;
+    glm::vec3 tMin = (boxMin - rayOrigin) * invRay;
+    glm::vec3 tMax = (boxMax - rayOrigin) * invRay;
 
+    glm::vec3 t0 = glm::max(tMin, tMax);
+    glm::vec3 t1 = glm::min(tMin, tMax);
+
+    float tClosest = glm::max(glm::max(t0.x, t0.y), glm::max(t0.z, t0.w));
+    float tFarthest = glm::min(glm::min(t1.x, t1.y), glm::min(t1.z, t1.w));
+
+    if (tClosest < tFarthest) {
+        t = tClosest;
+        return true;
+    }
+    return false;
+}
 void LidarEngine::fireRays(bool burstMode) {
     hitPoints.clear();
     isEnemyHits.clear();
@@ -56,18 +73,18 @@ void LidarEngine::fireRays(bool burstMode) {
             float x = burstRadius * sin(phi) * cos(theta);
             float y = burstRadius * sin(phi) * sin(theta);
             float z = burstRadius * cos(phi);
-            
+
             rays.push_back(glm::vec3(x, y, z));
         }
     } else {
         for (int i = 0; i < numRays; ++i) {
             float theta = (rand() / (float)RAND_MAX) * 2.0f * glm::pi<float>();
             float phi = (rand() / (float)RAND_MAX) * (glm::pi<float>() / 2.0f) * (coneHeight / burstRadius);
-            
+
             float x = coneHeight * sin(phi) * cos(theta);
             float y = coneHeight * sin(phi) * sin(theta);
             float z = coneHeight * cos(phi);
-            
+
             rays.push_back(glm::vec3(x, y, z));
         }
     }
@@ -95,25 +112,6 @@ void LidarEngine::fireRays(bool burstMode) {
     renderMarkers();
 }
 
-bool rayAABBIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, 
-                          glm::vec3 boxMin, glm::vec3 boxMax, 
-                          float& t) {
-    glm::vec3 invRay = glm::vec3(1.0f) / rayDirection;
-    glm::vec3 tMin = (boxMin - rayOrigin) * invRay;
-    glm::vec3 tMax = (boxMax - rayOrigin) * invRay;
-
-    glm::vec3 t0 = glm::max(tMin, tMax);
-    glm::vec3 t1 = glm::min(tMin, tMax);
-
-    float tClosest = glm::max(glm::max(t0.x, t0.y), glm::max(t0.z, t0.w));
-    float tFarthest = glm::min(glm::min(t1.x, t1.y), glm::min(t1.z, t1.w));
-
-    if (tClosest < tFarthest) {
-        t = tClosest;
-        return true;
-    }
-    return false;
-}
 
 void LidarEngine::renderMarkers() {
     if (hitPoints.empty()) return;
@@ -139,7 +137,7 @@ void LidarEngine::renderMarkers() {
     }
 
     if (!markerVertices.empty()) {
-        glBindVertexArray(vao);
+        glBindVertexArray(vertex_arr_obj);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferSubData(GL_ARRAY_BUFFER, 0, markerVertices.size() * sizeof(glm::vec3), markerVertices.data());
         glPointSize(10.0f);
