@@ -4,12 +4,12 @@ project(BlindSpot)
 
 file(GLOB SOURCES
     src/main.cpp
-        hdr/LidarEngine/*.cpp
-        hdr/LidarEngine/*.h
-        hdr/LidarEngine/*.hpp
-        hdr/*.cpp
-        hdr/*.hpp
-        hdr/*.h
+        src/hdr/LidarEngine/*.cpp
+        src/hdr/LidarEngine/*.h
+        src/hdr/LidarEngine/*.hpp
+        src/hdr/*.cpp
+        src/hdr/*.hpp
+        src/hdr/*.h
 )
 
 add_executable(BlindSpot ${SOURCES})
