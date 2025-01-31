@@ -33,7 +33,7 @@ void LidarEngine::initializeGL() {
     glBindVertexArray(0);
 }
 
-void LidarEngine::addObject(WorldObject obj) {
+void LidarEngine::addObject(engines::WorldObject obj) {
     objects.push_back(obj);
 }
 
