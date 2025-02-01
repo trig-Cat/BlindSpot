@@ -1,13 +1,17 @@
 #ifndef LIDAR_ENGINE_H
 #define LIDAR_ENGINE_H
 
-
 #include <GL/glut.h>
 #include <vector>
 #include <cmath>
+#include <random>
 #include <glm/glm.hpp>
-
 #include <glm/gtc/matrix_transform.hpp>
+
+struct Vertex {
+    glm::vec3 position;
+    glm::vec3 color;
+};
 
 class WorldObject {
 public:
@@ -15,7 +19,7 @@ public:
     glm::vec3 size;
     bool isEnemy;
     
-    WorldObject(glm::vec3 pos, glm::vec3 sz, bool enemy = false) 
+    WorldObject(const glm::vec3& pos, const glm::vec3& sz, bool enemy = false)
         : position(pos), size(sz), isEnemy(enemy) {}
 };
 
@@ -30,16 +34,18 @@ private:
     std::vector<bool> isEnemyHits;
     GLuint vertex_arr_obj;
     GLuint vbo;
-
+    std::mt19937 rng;
     
+    bool rayAABBIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection,
+                             const glm::vec3& boxMin, const glm::vec3& boxMax, float& t);
 public:
     LidarEngine(int numRays = 10000);
     ~LidarEngine();
     
     void initializeGL();
-    void addObject(WorldObject obj);
+    void addObject(const WorldObject& obj);
+    void setCameraPosition(const glm::vec3& position);
     void fireRays(bool burstMode = false);
-    void setCameraPosition(glm::vec3 position);
     void renderMarkers();
 };
 
