@@ -4,3 +4,7 @@ cmake-build-debug
 cmake-build-release
 build
 .idea
+.clangd
+.cache
+build
+run.sh
