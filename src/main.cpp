@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "hdr/LidarEngine/LidarEngine.h"
+#include "LidarEngine.h"
 
 using namespace std;
 

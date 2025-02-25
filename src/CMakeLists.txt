@@ -1,31 +1,27 @@
 file(GLOB SOURCES
-    main.cpp
-    hdr/LidarEngine/*.cpp
-    hdr/LidarEngine/*.h
-    hdr/LidarEngine/*.hpp
-    hdr/*.cpp
-    hdr/*.hpp
-    hdr/*.h
+  main.cpp
+  *.cpp
+  *.h
+  *.hpp
 )
 
-add_executable(BSrc ${SOURCES})
+INCLUDE_DIRECTORIES(../include/)
+add_executable(BlindSpot ${SOURCES})
 
 find_package(fmt CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(FreeGLUT CONFIG REQUIRED)
 
-target_link_libraries(BSrc PRIVATE glad::glad)
+target_link_libraries(BlindSpot PRIVATE glad::glad)
 
-target_link_libraries(BSrc PRIVATE $<IF:$<TARGET_EXISTS:FreeGLUT::freeglut>,FreeGLUT::freeglut,FreeGLUT::freeglut_static>)
+target_link_libraries(BlindSpot PRIVATE $<IF:$<TARGET_EXISTS:FreeGLUT::freeglut>,FreeGLUT::freeglut,FreeGLUT::freeglut_static>)
 
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(BSrc PRIVATE glm::glm)
+target_link_libraries(BlindSpot PRIVATE glm::glm)
 
+find_package(OpenGL REQUIRED)
+target_link_libraries(BlindSpot PRIVATE OpenGL::GL)
+target_link_libraries(BlindSpot PRIVATE fmt::fmt)
 
-target_link_libraries(BSrc PRIVATE fmt::fmt)
-
-target_link_libraries(BSrc PRIVATE glfw)
-
-find_package(GLUT REQUIRED)
-target_link_libraries(BSrc PRIVATE GLUT::GLUT)
+target_link_libraries(BlindSpot PRIVATE glfw)
