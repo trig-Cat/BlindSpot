@@ -19,8 +19,7 @@ public:
     glm::vec3 size;
     bool isEnemy;
     
-    WorldObject(const glm::vec3& pos, const glm::vec3& sz, bool enemy = false)
-        : position(pos), size(sz), isEnemy(enemy) {}
+    WorldObject(const glm::vec3& pos, const glm::vec3& sz, bool enemy);
 };
 
 class LidarEngine {
@@ -45,7 +44,7 @@ public:
     void initializeGL();
     void addObject(const WorldObject& obj);
     void setCameraPosition(const glm::vec3& position);
-    void fireRays(bool burstMode = false);
+    void fireRays(bool burstMode);
     void renderMarkers();
 };
 

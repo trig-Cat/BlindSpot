@@ -1,11 +1,12 @@
 file(GLOB SOURCES
-  main.cpp
   *.cpp
-  *.h
   *.hpp
+  *.h
+  **/*.cpp
+  **/*.hpp
+  **/*.h
 )
 
-INCLUDE_DIRECTORIES(../include/)
 add_executable(BlindSpot ${SOURCES})
 
 find_package(fmt CONFIG REQUIRED)
