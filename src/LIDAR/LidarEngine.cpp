@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 #include <random>
 #include <vector>
 
@@ -154,4 +155,7 @@ void LidarEngine::renderMarkers() {
   glDrawArrays(GL_POINTS, 0, markerVertices.size());
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
+  
+  
+  
 }
