@@ -1,80 +1,62 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/fwd.hpp>
+#include <LIDAR/LidarEngine.h>
+#include <SDL3/SDL.h>
 #include <iostream>
-#include "GL/freeglut.h"
-#include "LIDAR/LidarEngine.h"
 
-using namespace std;
+int main(int argc, const char *argv[]) {
+  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError()
+              << std::endl;
+    return -1;
+  }
 
-LidarEngine* enginePtr = nullptr;
-bool useBurstMode = false;
+  SDL_Window *window = SDL_CreateWindow("WindowX", 800, 600, 0);
+  if (window == nullptr) {
+    std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError()
+              << std::endl;
+    SDL_Quit();
+    return -1;
+  }
 
-void displayCallback(LidarEngine* &engine, GLFWwindow* window) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    engine->fireRays(useBurstMode);
-    glfwSwapBuffers(window);
-}
-
-void reshapeCallback(int w, int h) {
-    glViewport(0, 0, w, h);
-}
-
-void keyboardCallback(unsigned char key, int x, int y) {
-    if(key == 'b' || key == 'B') {
-        useBurstMode = !useBurstMode;
-    }
-    glutPostRedisplay();
-}
-
-int main(int argc, char **argv)
-{
-    glfwInit();
-
-    // lidarEngine->initializeGL();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow* window = glfwCreateWindow(800, 600, "yooo", nullptr, nullptr);
-    // ERROR CHECK
-    if (window == nullptr) {
-        cout << "Failed to create window" << endl;
-        glfwTerminate();
-        return -1;
+  SDL_Renderer *renderer = SDL_CreateRenderer(window, "");
+  if (renderer == nullptr) {
+    std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError()
+              << std::endl;
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return -1;
+  }
+  
+  LidarEngine lidarEngine(500);
+  WorldObject worldObject(glm::vec3(50.0f, 34.0f, 0.0f), glm::vec3(10.0f, 10.0f, 0.0f), false);
+  
+  lidarEngine.addObject(worldObject);
+  lidarEngine.setCameraPosition(glm::vec3(800.0f, 600.0f, 0.0f));
+  
+  bool quit = false;
+  SDL_Event e;
+  while (!quit) {
+    while (SDL_PollEvent(&e) != 0) {
+      if (e.type == SDL_EVENT_QUIT) {
+        quit = true;
+      }
     }
 
-    glfwMakeContextCurrent(window);
+    SDL_RenderClear(renderer);
 
-    gladLoadGL();
-    glViewport(0, 0, 800, 600);
+    // Render code here
+    lidarEngine.fireRays(false);
+    lidarEngine.renderMarkers(renderer);
 
+    SDL_SetRenderDrawColor(renderer, 155, 100, 0, 255);
+    SDL_RenderPresent(renderer);
+  }
 
-    glClearColor(0.56f, 0.3f, 0.31f, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glfwSwapBuffers(window);
-    
-    glEnable(GL_DEPTH_TEST);
-    LidarEngine* lidarEngine = new LidarEngine(5000);
-    lidarEngine->setCameraPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    lidarEngine->addObject(WorldObject(glm::vec3(0.0f, 0.0f, -0.5f), glm::vec3(1.0f, 1.0f, 1.0f), false));
-    lidarEngine->addObject(WorldObject(glm::vec3(2.0f, 0.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), true));
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
 
-    while (!glfwWindowShouldClose(window)) {
-        // glClearColor(0.56f, 0.3f, 0.31f, 1);
-        // glClear(GL_COLOR_BUFFER_BIT);
-        // glfwSwapBuffers(window);
-        displayCallback(lidarEngine, window);
-        // reshapeCallback(40, 40);
-        glfwPollEvents();
-    }
-    
-    delete lidarEngine;
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    return 0;
+  return 0;
 }
-
 
 /*
 int main(int argc, char** argv) {
@@ -84,22 +66,24 @@ int main(int argc, char** argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
     glutCreateWindow("Lidar Engine");
-    
+
     if (!gladLoadGL()) {
         return -1;
     }
-    
+
     glEnable(GL_DEPTH_TEST);
     enginePtr = new LidarEngine(5000);
     enginePtr->setCameraPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    enginePtr->addObject(WorldObject(glm::vec3(0.0f, 0.0f, -0.5f), glm::vec3(1.0f, 1.0f, 1.0f), false));
-    enginePtr->addObject(WorldObject(glm::vec3(2.0f, 0.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f), true));
-    
+    enginePtr->addObject(WorldObject(glm::vec3(0.0f, 0.0f, -0.5f),
+glm::vec3(1.0f, 1.0f, 1.0f), false));
+    enginePtr->addObject(WorldObject(glm::vec3(2.0f, 0.0f, -1.0f),
+glm::vec3(1.0f, 1.0f, 1.0f), true));
+
     glutDisplayFunc(displayCallback);
     glutReshapeFunc(reshapeCallback);
     glutKeyboardFunc(keyboardCallback);
     glutMainLoop();
-    
+
     delete enginePtr;
     return 0;
 }
