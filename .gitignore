@@ -8,3 +8,4 @@ build
 .cache
 build
 run.sh
+.DS_Store

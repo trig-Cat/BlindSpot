@@ -3,7 +3,12 @@ cmake_minimum_required(VERSION 3.17)
 project(BlindSpot)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
+add_subdirectory(external/glm EXCLUDE_FROM_ALL)
+include_directories(external/**/include)
 ADD_SUBDIRECTORY(src)
+
 
 
 
